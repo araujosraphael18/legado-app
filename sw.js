@@ -18,12 +18,12 @@
 /* ── 1. CACHE ────────────────────────────────────────────────────── */
 const CACHE = 'legado-v400';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icon-192.png',
-  '/icon-512.png',
-  '/icon-120.png',
+  '/legado-app/',
+  '/legado-app/index.html',
+  '/legado-app/manifest.json',
+  '/legado-app/icon-192.png',
+  '/legado-app/icon-512.png',
+  '/legado-app/icon-120.png',
   'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js',
 ];
 
@@ -35,7 +35,7 @@ const ASSETS = [
 importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js');
 
-const firebaseConfig = {
+const FIREBASE_CONFIG = {
   apiKey: "AIzaSyAPOYgri0V9pitHbu9jEAu4XIaxXQ6M62A",
   authDomain: "legado-bc5fd.firebaseapp.com",
   projectId: "legado-bc5fd",
@@ -105,7 +105,7 @@ self.addEventListener('fetch', function (e) {
       }).catch(function () {
         /* Offline + sem cache → devolve a shell do app para navegação */
         if (e.request.destination === 'document') {
-          return caches.match('/index.html');
+          return caches.match('/legado-app/index.html');
         }
         return new Response('Offline', { status: 503 });
       });
@@ -133,8 +133,8 @@ messaging.onBackgroundMessage(function (fcmPayload) {
 
   return self.registration.showNotification(titulo, {
     body:               corpo,
-    icon:               '/icon-512.png',
-    badge:              '/icon-120.png',
+    icon:               '/legado-app/icon-512.png',
+    badge:              '/legado-app/icon-120.png',
     tag:                d.tag || ('lgd-fcm-' + tipo),
     renotify:           urgente,
     silent:             !urgente,
@@ -165,8 +165,8 @@ self.addEventListener('push', function (e) {
   e.waitUntil(
     self.registration.showNotification(titulo, {
       body:               corpo,
-      icon:               '/icon-512.png',
-      badge:              '/icon-120.png',
+      icon:               '/legado-app/icon-512.png',
+      badge:              '/legado-app/icon-120.png',
       tag:                'legado-push-' + tipo,
       renotify:           urgente,
       silent:             !urgente,
@@ -302,28 +302,28 @@ function _buildActions(tipo, data) {
 /** Mapeia ação clicada → seção e URL de destino */
 function _rotearAcao(action, tipo, payload) {
   const mapa = {
-    'ver-cartao':    { secao: 'cartoes', url: '/#cartoes'  },
-    'ver-milhas':    { secao: 'milhas',  url: '/#milhas'   },
-    'ver-meta':      { secao: 'visao',   url: '/#visao'    },
-    'ver-divida':    { secao: 'visao',   url: '/#visao'    },
-    'ver-reserva':   { secao: 'visao',   url: '/#visao'    },
-    'aporte-rapido': { secao: 'visao',   url: '/#visao'    },
-    'ver-premium':   { secao: 'config',  url: '/#config'   },
-    'abrir':         { secao: 'visao',   url: '/'          },
+    'ver-cartao':    { secao: 'cartoes', url: '/legado-app/#cartoes'  },
+    'ver-milhas':    { secao: 'milhas',  url: '/legado-app/#milhas'   },
+    'ver-meta':      { secao: 'visao',   url: '/legado-app/#visao'    },
+    'ver-divida':    { secao: 'visao',   url: '/legado-app/#visao'    },
+    'ver-reserva':   { secao: 'visao',   url: '/legado-app/#visao'    },
+    'aporte-rapido': { secao: 'visao',   url: '/legado-app/#visao'    },
+    'ver-premium':   { secao: 'config',  url: '/legado-app/#config'   },
+    'abrir':         { secao: 'visao',   url: '/legado-app/'        },
     'dispensar':     { secao: null,      url: null         },
   };
 
   /* Clique no corpo da notificação (sem ação específica) */
   if (!action || action === 'default') {
     const mapaTipo = {
-      cartao:  { secao: 'cartoes', url: '/#cartoes' },
-      milhas:  { secao: 'milhas',  url: '/#milhas'  },
-      premium: { secao: 'config',  url: '/#config'  },
+      cartao:  { secao: 'cartoes', url: '/legado-app/#cartoes' },
+      milhas:  { secao: 'milhas',  url: '/legado-app/#milhas'  },
+      premium: { secao: 'config',  url: '/legado-app/#config'  },
     };
-    return mapaTipo[tipo] || { secao: 'visao', url: '/' };
+    return mapaTipo[tipo] || { secao: 'visao', url: '/legado-app/' };
   }
 
-  return mapa[action] || { secao: 'visao', url: '/' };
+  return mapa[action] || { secao: 'visao', url: '/legado-app/' };
 }
 
 /** Exibe notificação local imediata (disparada pelo próprio app, sem servidor) */
@@ -336,15 +336,15 @@ function _exibirLocal(payload) {
 
   self.registration.showNotification(titulo, {
     body:               corpo,
-    icon:               '/icon-512.png',
-    badge:              '/icon-120.png',
+    icon:               '/legado-app/icon-512.png',
+    badge:              '/legado-app/icon-120.png',
     tag:                'legado-local-' + tipo,
     renotify:           urgente,
     silent:             !urgente,
     vibrate:            urgente ? [200, 100, 200] : [100],
     requireInteraction: urgente,
     actions:            _buildActions(tipo, payload),
-    data:               { url: payload.url || '/', tipo: tipo, payload: payload },
+    data:               { url: payload.url || '/legado-app/', tipo: tipo, payload: payload },
     timestamp:          Date.now(),
   });
 }

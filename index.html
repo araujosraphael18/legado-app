@@ -282,7 +282,6 @@ main{padding:20px 24px 40px;max-width:1800px;margin:0 auto}
 .b-base{background:#0c2a1a;color:#4ade80;border:1px solid #166534}
 .b-cresc{background:#1a1a0a;color:#fbbf24;border:1px solid #92400e}
 .b-div{background:#0a1f2e;color:#38bdf8;border:1px solid #0369a1}
-.b-blue{background:#0e1f3a;color:#60a5fa;border:1px solid #1d4ed8}
 .b-red{background:var(--red-glow);color:var(--red)}
 .b-green{background:var(--green-glow);color:var(--green)}
 .b-gold{background:var(--gold-glow);color:var(--gold-lt);border:1px solid var(--gold-dim)}
@@ -839,14 +838,52 @@ button{-webkit-tap-highlight-color:transparent}
 .div-card-saldo{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--red);white-space:nowrap}
 .div-card-saldo.quitado{color:var(--green)}
 .div-card-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
-.div-stat{background:var(--surface2);border-radius:var(--r-sm);padding:8px 10px}
-.div-stat .lbl{font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
-.div-stat .val{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--text-dim)}
+.div-stat{background:var(--surface2);border-radius:var(--r-sm);padding:8px 10px;min-width:0}
+.div-stat .lbl{font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;white-space:nowrap}
+.div-stat .val{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .div-acoes{display:flex;gap:6px;flex-wrap:wrap}
 .div-acoes button{flex:1;min-width:80px;font-size:11px;padding:6px 10px;border-radius:6px;cursor:pointer;font-weight:600;border:1px solid;font-family:var(--sans);transition:all .15s;white-space:nowrap}
 .div-chart-wrap{height:200px}
 @media(min-width:601px){.div-chart-wrap{height:220px}}
-@media(max-width:600px){.div-card-stats{grid-template-columns:repeat(2,1fr)}.div-acoes button{min-width:calc(50% - 4px)}}
+@media(max-width:600px){
+  .div-card-stats{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px
+  }
+  /* Original e Saldo: layout row (label esq, valor dir) para não cortar centavos */
+  .div-card-stats .div-stat:nth-child(1),
+  .div-card-stats .div-stat:nth-child(2){
+    grid-column:span 1;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:6px;
+    padding:9px 10px
+  }
+  .div-card-stats .div-stat:nth-child(1) .lbl,
+  .div-card-stats .div-stat:nth-child(2) .lbl{
+    margin-bottom:0;
+    flex-shrink:0
+  }
+  .div-card-stats .div-stat:nth-child(1) .val,
+  .div-card-stats .div-stat:nth-child(2) .val{
+    font-size:13px;
+    text-align:right;
+    overflow:visible;
+    text-overflow:unset
+  }
+  /* Já pago e Economia: menores, empilhados normalmente */
+  .div-card-stats .div-stat:nth-child(3),
+  .div-card-stats .div-stat:nth-child(4){
+    padding:7px 8px
+  }
+  .div-card-stats .div-stat:nth-child(3) .val,
+  .div-card-stats .div-stat:nth-child(4) .val{
+    font-size:11px
+  }
+  .div-acoes button{min-width:calc(50% - 4px)}
+}
 
 /* ── iOS SAFE AREA ── */
 main{
@@ -4196,6 +4233,20 @@ function buildKPIs(){
   var totalMilhas=calcMilhasTotal();
 
   setText('kv-patrim', fmt(patrimonioLiq));
+  // Patrimônio Líquido negativo → cor vermelha + prefixo explícito
+  var kpEl = document.getElementById('kv-patrim');
+  if(kpEl){
+    if(patrimonioLiq < 0){
+      kpEl.classList.remove('gold');
+      kpEl.classList.add('red');
+      kpEl.textContent = '− R$ ' + Math.abs(patrimonioLiq).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+    } else {
+      kpEl.classList.remove('red');
+      kpEl.classList.add('gold');
+    }
+  }
+  var kpSub = document.getElementById('kv-patrim-sub');
+  if(kpSub) kpSub.textContent = patrimonioLiq < 0 ? 'dívidas > patrimônio investido' : 'investido − dívidas';
   setText('kv-filhos', fmt(D.filhos));
   setText('kv-acoes', fmt(totalAcoes));
   setText('kv-acoes-sub', ACOES.length > 0
@@ -4278,9 +4329,10 @@ function buildEvolucao(){
   var mAporte = D.metaFilhos||0;
   var mAcoes  = D.metaAcoes||0;
   var mRes    = D.metaReserva>0 ? Math.round(D.metaReserva/12) : 0;
-  var temMetas = (mAporte>0 || mAcoes>0 || mRes>0 || D.filhos>0 || calcAcoes()>0 || D.reserva>0);
+  // Inclui salário na condição: usuário com renda mas sem metas ainda vê projeção
+  var temMetas = (mAporte>0 || mAcoes>0 || mRes>0 || D.filhos>0 || calcAcoes()>0 || D.reserva>0 || D.salario>0);
 
-  // Painel de estado vazio — mostra CTA quando não há metas nem saldos
+  // Painel de estado vazio — mostra CTA quando não há nenhum dado financeiro
   var emptyEl   = document.getElementById('ev-empty-state');
   var totalWrap = document.getElementById('ch-ev-total') ? document.getElementById('ch-ev-total').closest('.card') : null;
   var grid3     = totalWrap ? totalWrap.nextElementSibling : null;
@@ -4300,9 +4352,14 @@ function buildEvolucao(){
     for(var i=0;i<12;i++){v=v*(1+rate/12)+monthly;arr.push(Math.round(v));}
     return arr;
   }
-  var evF=genEv(D.filhos,   mAporte, 0.12);
-  var evA=genEv(calcAcoes(),mAcoes,  0.15);
-  var evR=genEv(D.reserva,  mRes,    0.105);
+  // Fallback: sem meta definida, projeta 10% do salário como aporte estimado
+  var salBase = D.salario || 0;
+  var mAporteFinal = mAporte > 0 ? mAporte : (D.filhos > 0 ? Math.round(salBase * 0.1) : 0);
+  var mAcoesFinal  = mAcoes  > 0 ? mAcoes  : (calcAcoes() > 0 ? Math.round(salBase * 0.1) : 0);
+  var mResFinal    = mRes    > 0 ? mRes    : (D.reserva > 0 ? Math.round(salBase * 0.05) : 0);
+  var evF=genEv(D.filhos,    mAporteFinal, 0.12);
+  var evA=genEv(calcAcoes(), mAcoesFinal,  0.15);
+  var evR=genEv(D.reserva,   mResFinal,    0.105);
   var evT=evF.map(function(v,i){return v+evA[i]+evR[i];});
 
   mkLine('ch-ev-total',meses,[
@@ -4981,15 +5038,28 @@ function buildAposentadoria(){
       options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:7,padding:9,font:{size:10}}}}}});
   }
 
-  // Projeção aposentadoria — simula aportes mensais
-  var mensal=APOS.length>1?(totalApos/(APOS.length||1)):100; // média dos aportes
+  // Projeção aposentadoria — calcula aporte mensal real com base no histórico
+  // Usa a soma dos últimos 12 meses dividida por 12 (mais preciso que média simples)
+  var anosAtras12 = new Date(agora.getFullYear()-1, agora.getMonth(), 1);
+  var aportesRecentes = APOS.filter(function(a){
+    if(!a.data) return false;
+    var d = new Date(a.data);
+    return d >= anosAtras12;
+  });
+  var somaRecente = aportesRecentes.reduce(function(s,a){return s+(a.valor||0);},0);
+  // Aporte mensal estimado: média dos últimos 12 meses; fallback: metaApos/240 (30 anos)
+  var mensal = aportesRecentes.length > 0
+    ? Math.round(somaRecente / 12)
+    : (metaApos > 0 ? Math.round(metaApos / 240) : (totalApos > 0 ? Math.round(totalApos * 0.02) : 200));
+
   var anos=[]; var vals=[]; var v=totalApos;
   for(var y=0;y<=30;y++){
     anos.push(agora.getFullYear()+y);
     vals.push(Math.round(v));
-    v=v*(1.08)+mensal*12; // 8% ao ano + aportes
+    v=v*(1.08)+mensal*12; // 8% ao ano + aportes mensais projetados
   }
-  // Projeção KPIs
+
+  // KPIs principais (apos-proj-kpis)
   document.getElementById('apos-proj-kpis').innerHTML=[
     {label:'Em 5 anos',  val:fmtK(vals[5]||0),  cls:'gold'},
     {label:'Em 10 anos', val:fmtK(vals[10]||0), cls:'green'},
@@ -4998,8 +5068,20 @@ function buildAposentadoria(){
     {label:'Meta atingida em', val:calcAnosParaMeta(totalApos,mensal,metaApos)+' anos', cls:'gold'},
   ].map(function(k){return '<div><div class="t-xs t-muted">'+k.label+'</div><div class="t-mono t-'+k.cls+'" style="font-size:16px;margin-top:5px;font-weight:700">'+k.val+'</div></div>';}).join('');
 
+  // KPIs secundários (apos-proj-kpis-2) — aporte estimado + renda projetada na meta
+  var el2 = document.getElementById('apos-proj-kpis-2');
+  if(el2){
+    var rendaMeta = metaApos > 0 ? fmtK(metaApos * 0.004) : '—'; // regra dos 4% (SWR)
+    el2.innerHTML=[
+      {label:'Aporte Mensal Estimado', val:'R$ '+mensal.toLocaleString('pt-BR'),  cls:'gold'},
+      {label:'Renda passiva (meta)',    val:rendaMeta+'/mês',                      cls:'green'},
+      {label:'Acumulado (12 meses)',    val:fmtK(somaRecente||totalApos*0.12),    cls:'blue'},
+    ].map(function(k){return '<div><div class="t-xs t-muted">'+k.label+'</div><div class="t-mono t-'+k.cls+'" style="font-size:14px;margin-top:4px;font-weight:700">'+k.val+'</div></div>';}).join('');
+  }
+
   mkLine('ch-apos-proj',anos,[
     {label:'Patrimônio Aposentadoria',data:vals,borderColor:'#c9a227',backgroundColor:'#c9a22712',fill:true,tension:.4,pointRadius:2},
+    {label:'Meta',data:anos.map(function(){return metaApos||0;}),borderColor:'#3ecf6e44',backgroundColor:'transparent',borderDash:[6,4],tension:0,pointRadius:0},
   ],false);
 }
 

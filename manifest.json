@@ -1,31 +1,86 @@
 {
-  "name": "Legado — Construa o legado da sua família",
+  "name": "Legado — Controle Financeiro Familiar",
   "short_name": "Legado",
-  "description": "Controle financeiro, milhas e investimentos em um só lugar",
-  "start_url": "/",
+  "description": "Controle patrimônio, milhas e investimentos. Construa o legado da sua família.",
+  "start_url": "/legado-app/",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#0a0f1e",
-  "theme_color": "#0a0f1e",
+  "background_color": "#080e1a",
+  "theme_color": "#080e1a",
   "lang": "pt-BR",
+  "dir": "ltr",
   "categories": ["finance", "productivity"],
   "icons": [
-    { "src": "icon-120.png",  "sizes": "120x120",   "type": "image/png" },
-    { "src": "icon-152.png",  "sizes": "152x152",   "type": "image/png" },
-    { "src": "icon-167.png",  "sizes": "167x167",   "type": "image/png" },
-    { "src": "apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
-    { "src": "icon.png",      "sizes": "192x192",   "type": "image/png", "purpose": "any maskable" },
-    { "src": "icon-512.png",  "sizes": "512x512",   "type": "image/png", "purpose": "any maskable" },
-    { "src": "icon-1024.png", "sizes": "1024x1024", "type": "image/png" }
-  ],
-  "screenshots": [],
-  "shortcuts": [
     {
-      "name": "Lançamento Rápido",
-      "short_name": "Lançar",
-      "description": "Registrar transação em 3 toques",
-      "url": "/?action=fab",
-      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+      "src": "icon-120.png",
+      "sizes": "120x120",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-167.png",
+      "sizes": "167x167",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
-  ]
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot-mobile-1.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Painel principal — visão patrimonial"
+    },
+    {
+      "src": "screenshot-mobile-2.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Controle de milhas e alertas"
+    },
+    {
+      "src": "screenshot-desktop-1.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Dashboard completo"
+    }
+  ],
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=com.legado.financeiro",
+      "id": "com.legado.financeiro"
+    },
+    {
+      "platform": "itunes",
+      "url": "https://apps.apple.com/app/legado-financeiro/id000000000"
+    }
+  ],
+  "prefer_related_applications": false
 }

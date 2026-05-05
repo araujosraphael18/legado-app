@@ -27,7 +27,7 @@
 
 <!-- ══ ÍCONES BROWSER E ANDROID ══ -->
 <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="shortcut icon" href="apple-touch-icon.png">
 
 <!-- ══ PWA MANIFEST ══ -->
@@ -868,14 +868,27 @@ main{
   #hist-acoes-table{ display:none!important; }
   #hist-acoes-cards{ display:flex!important; flex-direction:column!important; gap:8px!important; }
 
-  /* Filtros de ações: 2 cols */
+  /* Filtros de ações: stack vertical em mobile */
   #sec-acoes [style*="display:flex;gap:8px;align-items:center"]{
-    display:grid!important;
-    grid-template-columns:1fr 1fr!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:stretch!important;
     gap:8px!important;
   }
+  #sec-acoes [style*="display:flex;gap:8px;align-items:center"] span.t-xs{
+    display:none!important; /* oculta o label "Ordenar por:" no mobile */
+  }
+  #sec-acoes [style*="display:flex;gap:8px;align-items:center"] select,
+  #sec-acoes [style*="display:flex;gap:8px;align-items:center"] .fsel{
+    width:100%!important;
+    box-sizing:border-box!important;
+    font-size:13px!important;
+  }
   #sec-acoes [style*="display:flex;gap:8px;align-items:center"] label{
-    grid-column:span 2!important;
+    display:flex!important;
+    align-items:center!important;
+    gap:6px!important;
+    font-size:13px!important;
   }
 
   /* Calendário dividendos — células maiores */
@@ -1537,6 +1550,10 @@ input[type="date"]::-webkit-calendar-picker-indicator{
 
 /* Corpo do card */
 .swp-body{padding:14px 16px}
+@media(max-width:600px){
+  #acoes-mob-cards .swp-body{padding:12px 12px}
+  #acoes-mob-cards .swp-wrap{margin-bottom:8px}
+}
 
 /* Linha principal */
 .swp-head{display:flex;align-items:center;gap:10px}
@@ -1610,6 +1627,131 @@ input[type="date"]::-webkit-calendar-picker-indicator{
 }
 @media(min-width:601px){
   .swp-mob-wrap{display:none!important}
+}
+
+/* ── CARTÃO — Lançamentos Mobile ──────────────────────────────────── */
+
+/* Filtros: empilhados em mobile */
+@media (max-width: 600px) {
+  .cg-filtros-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+  .cg-filtros-row select,
+  .cg-filtros-row .fsel {
+    width: 100% !important;
+    height: 44px !important;
+    font-size: 13px !important;
+  }
+  /* Oculta tabela, exibe cards */
+  .cg-table-wrap  { display: none !important; }
+  .cg-cards-wrap  { display: flex !important; flex-direction: column; gap: 10px; margin-top: 10px; }
+}
+@media (min-width: 601px) {
+  .cg-cards-wrap  { display: none !important; }
+}
+
+/* Card de lançamento */
+.cg-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  position: relative;
+}
+.cg-card.pago {
+  opacity: .65;
+  border-color: var(--green-dim);
+}
+/* Linha principal */
+.cg-card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.cg-card-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+  line-height: 1;
+  margin-top: 2px;
+}
+.cg-card-info { flex: 1; min-width: 0; }
+.cg-card-desc {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cg-card-cat {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.cg-card-valor {
+  font-family: var(--mono);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--gold);
+  flex-shrink: 0;
+  text-align: right;
+}
+.cg-card-valor.pago { color: var(--green); }
+/* Linha secundária */
+.cg-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.cg-tag {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+.cg-tag-card  { background: var(--surface3); color: var(--text-dim);  border: 1px solid var(--border); }
+.cg-tag-fat   { background: var(--blue-glow); color: var(--blue);     border: 1px solid var(--blue-dim); }
+.cg-tag-parc  { background: var(--gold-glow); color: var(--gold);     border: 1px solid var(--gold-dim); }
+.cg-tag-pago  { background: var(--green-glow); color: var(--green);   border: 1px solid var(--green-dim); }
+.cg-card-date {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-muted);
+}
+/* Botões de ação */
+.cg-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.cg-card-actions button {
+  flex: 1;
+  height: 38px;
+  border-radius: 10px;
+  border: none;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--sans);
+  transition: opacity .15s;
+}
+.cg-btn-pagar {
+  background: var(--green-glow);
+  color: var(--green);
+  border: 1px solid var(--green-dim) !important;
+}
+.cg-btn-del {
+  background: var(--red-glow);
+  color: var(--red);
+  border: 1px solid var(--red-dim) !important;
+  flex: 0 0 48px !important;
 }
 </style>
 <!-- Supabase SDK: carregado dinamicamente (lazy) só quando URL+Key estão configurados -->
@@ -2933,39 +3075,44 @@ function _sbLoadSDK(onReady, onFail){
     </div>
   </div>
 
-  <!-- ── TABELA DE GASTOS ── -->
+  <!-- ── LANÇAMENTOS DO CARTÃO ── -->
   <div class="card" style="margin-bottom:18px">
     <div class="ct" style="justify-content:space-between;flex-wrap:wrap;gap:8px">
       <span><span class="cd go" style="width:5px;height:5px;border-radius:50%;background:var(--gold);display:inline-block;margin-right:7px"></span>Lançamentos do Cartão</span>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <select class="fsel" id="cg-filtro-cartao" onchange="rebuildCartoes()" style="width:150px">
-          <option value="">Todos os cartões</option>
-        </select>
-        <select class="fsel" id="cg-filtro-mes" onchange="rebuildCartoes()" style="width:120px">
-          <option value="0">Todos os meses</option>
-          <option value="1">Janeiro</option><option value="2">Fevereiro</option><option value="3">Março</option>
-          <option value="4">Abril</option><option value="5">Maio</option><option value="6">Junho</option>
-          <option value="7">Julho</option><option value="8">Agosto</option><option value="9">Setembro</option>
-          <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
-        </select>
-        <select class="fsel" id="cg-filtro-cat" onchange="rebuildCartoes()" style="width:150px">
-          <option value="">Todas as categorias</option>
-          <option>Alimentação</option><option>Transporte</option><option>Saúde</option>
-          <option>Educação</option><option>Streaming</option><option>Vestuário</option>
-          <option>Lazer</option><option>Viagem</option><option>Pet</option>
-          <option>Casa</option><option>Eletrônicos</option><option>Outros</option>
-        </select>
-        <span id="cg-total-filtro" class="mono t-gold" style="font-size:13px"></span>
-      </div>
+      <!-- Total filtrado -->
+      <span id="cg-total-filtro" class="mono t-gold" style="font-size:13px"></span>
     </div>
-    <div style="overflow-x:auto;max-height:380px;overflow-y:auto;margin-top:10px">
+    <!-- Filtros responsivos -->
+    <div class="cg-filtros-row" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px">
+      <select class="fsel" id="cg-filtro-cartao" onchange="rebuildCartoes()" style="min-width:130px;flex:1">
+        <option value="">Todos os cartões</option>
+      </select>
+      <select class="fsel" id="cg-filtro-mes" onchange="rebuildCartoes()" style="min-width:120px;flex:1">
+        <option value="0">Todos os meses</option>
+        <option value="1">Janeiro</option><option value="2">Fevereiro</option><option value="3">Março</option>
+        <option value="4">Abril</option><option value="5">Maio</option><option value="6">Junho</option>
+        <option value="7">Julho</option><option value="8">Agosto</option><option value="9">Setembro</option>
+        <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
+      </select>
+      <select class="fsel" id="cg-filtro-cat" onchange="rebuildCartoes()" style="min-width:130px;flex:1">
+        <option value="">Todas as categorias</option>
+        <option>Alimentação</option><option>Transporte</option><option>Saúde</option>
+        <option>Educação</option><option>Streaming</option><option>Vestuário</option>
+        <option>Lazer</option><option>Viagem</option><option>Pet</option>
+        <option>Casa</option><option>Eletrônicos</option><option>Outros</option>
+      </select>
+    </div>
+    <!-- Desktop: tabela -->
+    <div class="cg-table-wrap" style="overflow-x:auto;max-height:380px;overflow-y:auto;margin-top:10px">
       <table class="dt">
         <thead style="position:sticky;top:0;background:var(--surface)">
-          <tr><th>Data</th><th>Cartão</th><th>Categoria</th><th>Descrição</th><th>Valor</th><th>Parcela</th><th>Total Compra</th><th>Fatura</th><th></th></tr>
+          <tr><th>Data</th><th>Cartão</th><th>Categoria</th><th>Descrição</th><th>Valor</th><th>Parcela</th><th>Total</th><th>Fatura</th><th></th></tr>
         </thead>
         <tbody id="cg-tbody"></tbody>
       </table>
     </div>
+    <!-- Mobile: cards -->
+    <div class="cg-cards-wrap" id="cg-mob-cards"></div>
   </div>
 
   <!-- ── ANÁLISE & ALERTAS ── -->
@@ -6768,7 +6915,7 @@ function instalarPWA(){
 // Service Worker para cache offline + FCM background push
 if('serviceWorker' in navigator){
   // SW principal (cache offline + notif-local)
-  navigator.serviceWorker.register('/sw.js').catch(function(){
+  navigator.serviceWorker.register('legado-app/sw.js').catch(function(){
     navigator.serviceWorker.register('sw.js').catch(function(){});
   });
   // SW do Firebase Messaging (obrigatório para push quando app está fechado)
@@ -6933,6 +7080,9 @@ function rebuildContas(){
       return '<tr><td class="mono t-xs">'+fmtData(c.data)+'</td><td><span style="color:'+(CAT_CORES[c.categoria]||'#fff')+';font-size:11px">'+(CAT_ICONS[c.categoria]||'')+'</span> <span class="t-xs">'+c.categoria+'</span></td><td class="t-dim" style="font-size:11px">'+c.descricao+'</td><td class="mono t-gold" style="font-weight:700">'+fmt(c.valor)+'</td><td>'+recBdg+'</td><td>'+statusBdg+'</td><td style="white-space:nowrap">'+acoes+'<button class="adel" onclick="delConta('+idx+')">✕</button></td></tr>';
     }).join(''):'<tr><td colspan="7" style="padding:0;border:none"><div class="es-wrap" style="padding:28px 16px">'+_ES_SVGS.contas+'<div class="es-title">Nenhum lançamento neste período</div><div class="es-sub">Registre suas contas fixas e gastos acima. O app identifica padrões e sugere onde você pode cortar.</div><button class="es-cta" onclick="document.getElementById(\'ct-valor\').focus();document.getElementById(\'ct-valor\').scrollIntoView({behavior:\'smooth\',block:\'center\'})">+ Lançar Primeira Conta</button></div></td></tr>';
   }
+
+  // ── Cards mobile (≤600px) ────────────────────────────────────────────
+  if(window.innerWidth<=600) _cgBuildCards(sorted);
 
   // Gráfico por categoria
   var porCat={};
@@ -7374,6 +7524,9 @@ function buildCartoes(){
       +(CARTOES_DEF.length ? _ES_SVGS.gastos_cartao+'<div class="es-title">Nenhum gasto registrado neste mês</div><div class="es-sub">Use o formulário acima para lançar compras e acompanhar sua fatura com alertas automáticos.</div><button class="es-cta" onclick="document.getElementById(\'ng-valor\')&&document.getElementById(\'ng-valor\').focus()">+ Registrar Primeiro Gasto</button>' : _ES_SVGS.cartoes+'<div class="es-title">Nenhum cartão cadastrado ainda</div><div class="es-sub">Adicione um cartão primeiro para começar a controlar seus gastos e faturas aqui.</div><button class="es-cta" onclick="abrirModalCartao&&abrirModalCartao()">+ Adicionar Cartão</button>')
       +'</div></td></tr>';
   }
+
+  // ── Cards mobile (≤600px) ────────────────────────────────────────────
+  if(window.innerWidth<=600) _cgBuildCards(sorted);
 
   // Gráfico por categoria
   var porCat={};
@@ -11111,11 +11264,11 @@ document.addEventListener('DOMContentLoaded', function(){
    CONFIGURAÇÃO FCM — substitua pelos valores reais do Firebase
    ──────────────────────────────────────────────────────────── */
 var LGD_FCM = {
-  apiKey:            'COLE_SUA_API_KEY_AQUI',
-  authDomain:        'legado-app.firebaseapp.com',
-  projectId:         'COLE_SEU_PROJECT_ID',
-  messagingSenderId: 'COLE_SEU_SENDER_ID',
-  appId:             'COLE_SEU_APP_ID',
+  apiKey:            "AIzaSyAPOYgri0V9pitHbu9jEAu4XIaxXQ6M62A",
+  authDomain:        "legado-bc5fd.firebaseapp.com",
+  projectId:         "legado-bc5fd",
+  messagingSenderId: "76127624410",
+  appId:             "1:76127624410:web:4b39659e6d8cc5af2c59e3",
   vapidKey:          'BOT2BcDW_OlwDi17D7_it1oHskOZSwjTN8m7YCY4aA5O_CDNa-Hsw4m-Xk7ZKkSM3wptM4m44d6Bbvecak8w9ro',  // Web Push certificate key pair
 };
 
@@ -12480,22 +12633,53 @@ function _swpBuildAcoes(lista, total){
     var cls   =tipoCls[a.tipo]||'b-base';
     var lbl   =tipoLabel[a.tipo]||a.tipo||'−';
     var expId ='swp-ae'+i;
+    var varColor=varPct===null?'var(--text-muted)':varPct>=0?'var(--green)':'var(--red)';
+    var varTxt  =varPct===null?'':(varPct>=0?'▲ +':'▼ ')+Math.abs(varPct).toFixed(1)+'%';
+    var cotacaoHtml=(a.cotacao&&a.cotacao>0&&a.cotacao!==a.pm)
+      ?'<span style="font-size:10px;color:var(--gold);margin-left:4px">'+fmt(a.cotacao)+'</span>'
+      :'';
     return (
       '<div class="swp-wrap" id="swp-wa'+i+'">'+
         '<div class="swp-bg"><div class="swp-bg-icon">🗑</div><span>Excluir</span></div>'+
         '<div class="swp-card">'+
           '<div class="swp-body">'+
-            '<div class="swp-head">'+
-              '<span class="swp-ticker">'+a.ticker+(a._merged?'<span style="font-size:9px;color:var(--gold);margin-left:3px">⊕</span>':'')+'</span>'+
+            /* Linha 1: Ticker + Badge + Botão expand */
+            '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">'+
+              '<span style="font-family:var(--mono);font-size:16px;font-weight:800;color:var(--text);letter-spacing:.02em">'+
+                a.ticker+(a._merged?'<span style="font-size:9px;color:var(--gold);margin-left:3px">⊕</span>':'')+
+              '</span>'+
               '<span class="bdg '+cls+'" style="font-size:9px">'+lbl+'</span>'+
-              '<div class="swp-right"><div class="mr">'+fmt(vtReal)+'</div>'+_swpVar(varPct)+'</div>'+
-              '<button class="swp-exp-btn" data-exp="'+expId+'" onclick="_swpToggle(this)">▾</button>'+
+              '<button class="swp-exp-btn" data-exp="'+expId+'" onclick="_swpToggle(this)" style="margin-left:auto">▾</button>'+
             '</div>'+
-            '<div class="swp-sub">'+
-              '<span>Qtd</span><span class="sv">'+a.qtd+'</span>'+
-              '<span>P.Médio</span><span class="sv">'+fmt(a.pm)+'</span>'+
-              (a.dy>0?'<span>DY</span><span class="sv" style="color:var(--green)">'+a.dy.toFixed(1)+'%</span>':'')+
+            /* Linha 2: 3 mini-cards com dados principais */
+            '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px">'+
+              '<div style="background:var(--surface3);border-radius:8px;padding:7px 8px">'+
+                '<div style="font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Qtd</div>'+
+                '<div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--text)">'+a.qtd+'</div>'+
+              '</div>'+
+              '<div style="background:var(--surface3);border-radius:8px;padding:7px 8px">'+
+                '<div style="font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">P.Médio</div>'+
+                '<div style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--text-dim)">'+fmt(a.pm)+cotacaoHtml+'</div>'+
+              '</div>'+
+              '<div style="background:var(--surface3);border-radius:8px;padding:7px 8px">'+
+                '<div style="font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">'+
+                  (a.dy>0?'DY%':'Total PM')+
+                '</div>'+
+                '<div style="font-family:var(--mono);font-size:12px;font-weight:700;color:'+
+                  (a.dy>0?'var(--green)':'var(--text-dim)')+'">'+
+                  (a.dy>0?a.dy.toFixed(1)+'%':fmt(vtPm))+
+                '</div>'+
+              '</div>'+
             '</div>'+
+            /* Linha 3: Valor atual + variação */
+            '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:8px 10px;background:var(--surface3);border-radius:8px">'+
+              '<span style="font-size:10px;color:var(--text-muted)">Valor atual</span>'+
+              '<div style="text-align:right">'+
+                '<span style="font-family:var(--mono);font-size:15px;font-weight:700;color:var(--gold)">'+fmt(vtReal)+'</span>'+
+                (varTxt?'<span style="font-size:10px;margin-left:6px;color:'+varColor+'">'+varTxt+'</span>':'')+
+              '</div>'+
+            '</div>'+
+            /* Barra % carteira */
             '<div class="swp-pbar">'+
               '<div class="swp-pbar-track"><div class="swp-pbar-fill" style="width:'+pReal+'%"></div></div>'+
               '<span class="swp-pbar-lbl">'+pReal+'%</span>'+
@@ -12795,4 +12979,73 @@ document.addEventListener('DOMContentLoaded',function(){
   }
 
 })();
+</script>
+
+<script>
+/* ── Lançamentos Cartão — Render Mobile _cgBuildCards ─────────────── */
+function _cgBuildCards(sorted) {
+  var el = document.getElementById('cg-mob-cards');
+  if (!el) return;
+
+  if (!sorted || !sorted.length) {
+    el.innerHTML =
+      '<div style="text-align:center;padding:32px 16px;color:var(--text-muted);font-size:12px;line-height:1.6">'
+      + '💳<br>Nenhum lançamento encontrado.<br>'
+      + '<span style="font-size:11px">Ajuste os filtros ou registre um gasto acima.</span>'
+      + '</div>';
+    return;
+  }
+
+  el.innerHTML = sorted.map(function (g, si) {
+    var idx       = CARTOES_GAS.indexOf(g);
+    var cartDef   = CARTOES_DEF.find(function (c) { return c.id === g.cartao_id; }) || {};
+    var cartNome  = cartDef.nome || '−';
+    var cartCor   = cartDef.cor  || 'var(--text-muted)';
+    var catIcon   = (typeof CART_CAT_ICONS !== 'undefined' && CART_CAT_ICONS[g.categoria]) || '🏷️';
+    var catCor    = (typeof CART_CAT_CORES !== 'undefined' && CART_CAT_CORES[g.categoria]) || 'var(--text-muted)';
+    var isPago    = g.status === 'pago';
+    var parcTxt   = g.parcelas > 1 ? g.parcela_atual + '/' + g.parcelas + 'x' : 'À vista';
+    var isParc    = g.parcelas > 1;
+    var fatura    = g.fatura || 'atual';
+    var dataFmt   = typeof fmtData === 'function' ? fmtData(g.data) : g.data;
+    var valorFmt  = typeof fmt     === 'function' ? fmt(g.valor)    : 'R$ ' + g.valor;
+
+    return (
+      '<div class="cg-card' + (isPago ? ' pago' : '') + '" id="cg-card-' + si + '">'
+
+        /* Linha principal: ícone + descrição + valor */
+        + '<div class="cg-card-head">'
+          + '<div class="cg-card-icon">' + catIcon + '</div>'
+          + '<div class="cg-card-info">'
+            + '<div class="cg-card-desc">' + (g.descricao || '−') + '</div>'
+            + '<div class="cg-card-cat" style="color:' + catCor + '">' + (g.categoria || '') + '</div>'
+          + '</div>'
+          + '<div class="cg-card-valor' + (isPago ? ' pago' : '') + '">'
+            + valorFmt
+            + (isPago ? '<div style="font-size:9px;color:var(--green);font-weight:600;margin-top:2px">PAGO</div>' : '')
+          + '</div>'
+        + '</div>'
+
+        /* Tags: cartão, fatura, parcelamento */
+        + '<div class="cg-card-meta">'
+          + '<span class="cg-tag cg-tag-card" style="color:' + cartCor + ';border-color:' + cartCor + '44">💳 ' + cartNome + '</span>'
+          + '<span class="cg-tag cg-tag-fat">📅 ' + fatura + '</span>'
+          + (isParc
+              ? '<span class="cg-tag cg-tag-parc">🔄 ' + parcTxt + '</span>'
+              : '<span class="cg-tag" style="background:var(--surface3);color:var(--text-muted);border:1px solid var(--border)">À vista</span>')
+          + '<span class="cg-card-date">' + dataFmt + '</span>'
+        + '</div>'
+
+        /* Botões de ação */
+        + '<div class="cg-card-actions">'
+          + (!isPago
+              ? '<button class="cg-btn-pagar" onclick="marcarGastoCartaoPago(' + idx + ')" >✅ Marcar como pago</button>'
+              : '<div style="flex:1;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--green)">✅ Pagamento registrado</div>')
+          + '<button class="cg-btn-del" onclick="delGastoCartao(' + idx + ')">🗑</button>'
+        + '</div>'
+
+      + '</div>'
+    );
+  }).join('');
+}
 </script>
